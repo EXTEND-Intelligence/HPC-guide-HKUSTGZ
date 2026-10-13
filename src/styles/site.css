@@ -204,17 +204,17 @@
   /* Reading layout */
   .docs-shell { display: grid; grid-template-columns: 226px minmax(0, 800px) 168px; gap: 42px; max-width: 1470px; margin: 0 auto; padding: 38px 36px 72px; align-items: start; min-height: calc(100vh - 144px); }
   .desktop-sidebar { position: sticky; top: 104px; padding-right: 22px; border-right: 1px solid var(--border); max-height: calc(100vh - 125px); overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
-  .nav-home { display: flex; align-items: center; gap: 9px; padding: 8px 11px; margin-bottom: 20px; font-size: 13px; border-radius: 6px; color: var(--muted); }
+  .nav-home { display: flex; align-items: center; gap: 9px; padding: 8px 11px; margin-bottom: 20px; font-size: 15px; line-height: 1.6; border-radius: 6px; color: var(--muted); }
   .nav-group { margin-bottom: 20px; }
-  .nav-group h2 { font-size: 10px; letter-spacing: .09em; font-weight: 650; color: var(--faint); margin: 0 0 8px 11px; }
-  .nav-link { display: flex; align-items: center; gap: 10px; padding: 6px 11px; margin: 2px 0; border-radius: 6px; color: var(--muted); font-size: 12px; min-height: 31px; }
-  .nav-number { font: 9px var(--mono); color: var(--faint); display: inline-flex; justify-content: center; width: 17px; }
+  .nav-group h2 { font-size: 12px; line-height: 1.5; letter-spacing: .09em; font-weight: 650; color: var(--faint); margin: 0 0 8px 11px; }
+  .nav-link { display: flex; align-items: center; gap: 10px; padding: 7px 11px; margin: 2px 0; border-radius: 6px; color: var(--muted); font-size: 14px; line-height: 1.6; min-height: 37px; }
+  .nav-number { font: 11px var(--mono); color: var(--faint); display: inline-flex; justify-content: center; width: 20px; flex-shrink: 0; }
   .nav-link:hover, .nav-home:hover { color: var(--accent); background: var(--surface-soft); }
   .nav-link.active, .nav-home.active { color: var(--accent); background: var(--accent-soft); font-weight: 650; }
   .nav-link.active .nav-number { color: var(--accent); }
-  .sidebar-note { margin: 25px 0 5px 11px; padding-top: 17px; border-top: 1px solid var(--border); color: var(--muted); font-size: 10px; }
+  .sidebar-note { margin: 25px 0 5px 11px; padding-top: 17px; border-top: 1px solid var(--border); color: var(--muted); font-size: 12px; }
   .sidebar-note .status-dot { margin-right: 5px; }
-  .sidebar-note small { color: var(--faint); font-size: 9px; margin-left: 12px; }
+  .sidebar-note small { color: var(--faint); font-size: 11px; margin-left: 12px; }
   .docs-main { min-width: 0; padding-top: 0; }
   .document-header { padding-bottom: 24px; margin-bottom: 27px; border-bottom: 1px solid var(--border); }
   .breadcrumb { display: flex; align-items: center; gap: 7px; margin-bottom: 29px; font-size: 10px; color: var(--faint); }
