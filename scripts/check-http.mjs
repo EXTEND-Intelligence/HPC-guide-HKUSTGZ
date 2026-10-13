@@ -27,4 +27,5 @@ for (const file of files) {
 const search = await (await get('/search.json')).json();
 assert.equal(search.length, files.length);
 await get('/favicon.svg');
+await get('/favicon-dark.svg');
 console.log(`HTTP verified at ${base.origin}: ${pages.length} pages, ${files.length} exact-source downloads, search index and favicon.`);

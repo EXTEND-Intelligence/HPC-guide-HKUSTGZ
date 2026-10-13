@@ -12,6 +12,8 @@ let searchRevision = 0;
 
 function setThemeLabel() {
   themeButton.setAttribute('aria-label', document.documentElement.dataset.theme === 'dark' ? '切换为浅色主题' : '切换为深色主题');
+  document.querySelector<HTMLMetaElement>('meta[name="theme-color"]')?.setAttribute('content', document.documentElement.dataset.theme === 'dark' ? '#0b0b0b' : '#f7f9f7');
+  document.querySelector<HTMLLinkElement>('[data-site-favicon]')?.setAttribute('href', document.documentElement.dataset.theme === 'dark' ? '/favicon-dark.svg' : '/favicon.svg');
 }
 setThemeLabel();
 themeButton.addEventListener('click', () => {
