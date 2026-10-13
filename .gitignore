@@ -1,0 +1,21 @@
+# Generated files, not tutorial source
+logs/
+outputs/
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.DS_Store
+
+# Astro website build and dependencies
+node_modules/
+dist/
+.astro/
+
+# Credentials must never enter the repository
+.env
+.env.*
+*.pem
+*.key
+id_rsa*
+id_ed25519*

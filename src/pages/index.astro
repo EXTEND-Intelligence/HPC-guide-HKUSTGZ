@@ -1,0 +1,59 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import Icon from '../components/Icon.astro';
+import { documents, documentHref, resources, resourceHref, verifiedAt } from '../data/catalog.mjs';
+const topics = [
+  { slug: 'hpc-overview', icon: 'layers', label: '先理解 HPC', detail: '平台区别 · 节点 · 资源申请' },
+  { slug: 'login-and-ssh', icon: 'terminal', label: '连接你的集群', detail: 'SSH · 密钥 · 主机指纹' },
+  { slug: 'storage-and-data', icon: 'server', label: '把代码和数据传过去', detail: '家目录 · SSD · 上传下载' },
+  { slug: 'debug-and-interactive', icon: 'code', label: '在计算节点调试', detail: '免费 debug · 交互式 shell' },
+  { slug: 'training-and-batch', icon: 'cpu', label: '开始训练与并行', detail: 'CPU 作业 · 数组 · 多个种子' },
+  { slug: 'pricing-and-budget', icon: 'clock', label: '看懂费用与限制', detail: '计算费 · 存储费 · 预算' },
+];
+---
+<SiteLayout title="从 SSH 到第一个计算作业" home>
+  <section class="home-hero">
+    <div class="hero-copy">
+      <div class="eyebrow"><span class="status-dot"></span>HKUST(GZ) · HPC 二期入门</div>
+      <h1>从登录集群，<br />到运行<span>第一个作业。</span></h1>
+      <p class="hero-description">用 SSH 管理代码，用 Slurm 申请资源。<br />概念讲清楚，命令可复制，不需要 Docker。</p>
+      <div class="hero-actions"><a class="button button-primary" href="/guide/quickstart/">开始第一个作业<Icon name="arrow" size={18} /></a><a class="button button-secondary" href="/scripts/">查看提交脚本<Icon name="code" size={17} /></a></div>
+      <div class="hero-tags"><span><Icon name="check" size={14} />免费短时调试</span><span><Icon name="check" size={14} />CPU 训练</span><span><Icon name="check" size={14} />多种子并行</span></div>
+    </div>
+    <div class="hero-terminal">
+      <div class="terminal-titlebar"><span class="terminal-dots"><i></i><i></i><i></i></span><span>SSH + Slurm</span><span class="terminal-platform">HPC Ⅱ</span></div>
+      <div class="terminal-body">
+        <p class="terminal-comment"># 01 · 在本机，连接集群</p><p><span class="terminal-prompt">$</span> ssh hkust-hpc2</p>
+        <p class="terminal-comment terminal-space"># 02 · 在登录节点，提交短测</p><p><span class="terminal-prompt">$</span> mkdir -p logs</p><p><span class="terminal-prompt">$</span> sbatch slurm/debug_cpu.sbatch</p>
+        <p class="terminal-output">Submitted batch job &lt;作业号&gt;</p>
+        <p class="terminal-comment terminal-space"># 03 · 查看队列，而不是直接训练</p><p><span class="terminal-prompt">$</span> squeue -u "$USER"<span class="terminal-cursor"></span></p>
+      </div>
+      <div class="terminal-caption"><span class="status-dot"></span>示例命令与输出，不是实时集群状态</div>
+    </div>
+  </section>
+
+  <section class="workflow-section" aria-labelledby="workflow-heading">
+    <div class="section-heading"><div><span class="section-kicker">先建立正确的使用习惯</span><h2 id="workflow-heading">三种位置，各做一件事。</h2></div><a class="text-link" href="/guide/hpc-overview/">了解节点区别<Icon name="arrow" size={16} /></a></div>
+    <div class="workflow-grid">
+      <article class="workflow-card"><div class="workflow-top"><span class="workflow-icon"><Icon name="monitor" size={24} /></span><span class="step-number">01 / LOCAL</span></div><h3>本机</h3><p>编辑代码，上传数据，下载结果。</p><span class="workflow-chip">ssh · rsync · 看图</span></article>
+      <article class="workflow-card"><div class="workflow-top"><span class="workflow-icon"><Icon name="terminal" size={24} /></span><span class="step-number">02 / LOGIN</span></div><h3>登录节点</h3><p>管理文件，提交作业，查询队列。</p><span class="workflow-chip">sbatch · squeue · scancel</span></article>
+      <article class="workflow-card"><div class="workflow-top"><span class="workflow-icon"><Icon name="cpu" size={24} /></span><span class="step-number">03 / COMPUTE</span></div><h3>计算节点</h3><p>拿到分配后，再运行训练与评估。</p><span class="workflow-chip">python · srun · 调试</span></article>
+    </div>
+    <div class="inline-note"><Icon name="book" size={18} /><p><strong>提交 ≠ 已开始运行。</strong> 排队时等待调度；作业结束自动释放，提前不用时取消指定作业。</p></div>
+  </section>
+
+  <section class="topics-section" aria-labelledby="topics-heading">
+    <div class="section-heading"><div><span class="section-kicker">按你眼前的问题阅读</span><h2 id="topics-heading">不用从头背，按需查。</h2></div><span class="section-count">10 个核心章节</span></div>
+    <div class="topic-grid">{topics.map((topic) => {
+      const document = documents.find((item) => item.slug === topic.slug)!;
+      return <a class="topic-card" href={documentHref(document)}><span class="topic-icon"><Icon name={topic.icon} size={23} /></span><div><h3>{topic.label}</h3><p>{topic.detail}</p></div><Icon name="chevron" class="card-arrow" size={17} /></a>;
+    })}</div>
+  </section>
+
+  <section class="home-resources" aria-labelledby="resources-heading">
+    <div class="section-heading"><div><span class="section-kicker">少改路径，先跑通流程</span><h2 id="resources-heading">提交脚本，拿来就用。</h2></div><a class="text-link" href="/scripts/">全部脚本与模板<Icon name="arrow" size={16} /></a></div>
+    <div class="script-grid">{resources.filter((item) => item.group === 'Slurm 脚本').map((resource) => <a class="script-card" href={resourceHref(resource)}><div class="script-card-top"><Icon name="code" size={20} /><span>{resource.slug === 'debug-cpu' ? '免费 / 仅调试' : resource.slug === 'train-gpu' ? '可选 GPU' : 'CPU 作业'}</span></div><h3>{resource.title}</h3><p>{resource.specification}</p><div class="script-filename">{resource.source.split('/').pop()}<Icon name="arrow" size={16} /></div></a>)}</div>
+  </section>
+
+  <section class="home-bottom"><div><span class="eyebrow">明确边界，放心使用</span><h2>教程提供流程，平台决定权限。</h2><p>队列、价格与账号配额可能变化。本教程不代表平台承诺，<br class="desktop-break" />也不会替你申请或取消真实资源。</p></div><a class="button button-secondary" href="/guide/verified-settings/">查看核验与适用范围<Icon name="arrow" size={17} /></a><small>官方资料核验于 {verifiedAt}</small></section>
+</SiteLayout>

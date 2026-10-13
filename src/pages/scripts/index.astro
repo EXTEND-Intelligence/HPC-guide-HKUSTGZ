@@ -1,0 +1,12 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import Icon from '../../components/Icon.astro';
+import { resources, resourceHref } from '../../data/catalog.mjs';
+const groups = ['Slurm 脚本', 'Python 示例', '配置模板'];
+const headings = groups.map((group, index) => ({ depth: 2, slug: `group-${index}`, text: group }));
+---
+<SiteLayout title="脚本与模板" description="查看、复制与下载 Slurm 提交脚本、Python 示例和 SSH 配置模板。" headings={headings}>
+  <div class="document-header"><div class="breadcrumb"><a href="/">HPC Guide</a><Icon name="chevron" size={13} /><span>实用资源</span></div><div class="eyebrow">COPY · RUN · UNDERSTAND</div><h1>脚本与模板</h1><p>完整源码可复制、可下载。先理解执行位置，再提交。</p></div>
+  <div class="inline-note"><Icon name="terminal" size={18} /><p>Slurm 脚本从项目根目录提交，并先创建 <code>logs/</code>。训练示例需要 Python 环境；不要直接在登录节点运行训练。</p></div>
+  {groups.map((group, index) => <section class="resource-section"><h2 id={`group-${index}`}>{group}</h2><div class="resource-list">{resources.filter((item) => item.group === group).map((resource) => <a class="resource-list-card" href={resourceHref(resource)}><span class="resource-file-icon"><Icon name={resource.language === 'python' ? 'code' : 'terminal'} size={23} /></span><div><h3>{resource.title}</h3><p>{resource.description}</p><code>{resource.source}</code></div><span class="resource-spec">{resource.specification}</span><Icon name="chevron" size={17} /></a>)}</div></section>)}
+</SiteLayout>

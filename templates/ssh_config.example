@@ -1,0 +1,12 @@
+# Merge into LOCAL ~/.ssh/config; replace YOUR_USERNAME.
+# This is NOT the HPC-side GitHub SSH configuration.
+Host hkust-hpc2
+    HostName hpc2login.hpc.hkust-gz.edu.cn
+    User YOUR_USERNAME
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+    ServerAliveInterval 60
+    ServerAliveCountMax 3
+
+# If using password login, omit IdentityFile and IdentitiesOnly.
+# Keep host-key checking enabled; verify any new/changed fingerprint.

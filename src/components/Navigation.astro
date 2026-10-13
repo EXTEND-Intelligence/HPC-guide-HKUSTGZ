@@ -1,0 +1,22 @@
+---
+import { documents, documentHref, navigationGroups } from '../data/catalog.mjs';
+import Icon from './Icon.astro';
+interface Props { currentPath: string; mobile?: boolean; }
+const { currentPath, mobile = false } = Astro.props;
+---
+<nav class="guide-navigation" aria-label={mobile ? '移动端教程导航' : '教程导航'}>
+  <a class:list={['nav-home', { active: currentPath === '/' }]} href="/" aria-current={currentPath === '/' ? 'page' : undefined}>
+    <Icon name="book" size={17} /> 教程首页
+  </a>
+  {navigationGroups.map((group) => (
+    <section class="nav-group">
+      <h2>{group}</h2>
+      {group === '脚本与参考' && <a class:list={['nav-link', { active: currentPath.startsWith('/scripts/') }]} href="/scripts/" aria-current={currentPath === '/scripts/' ? 'page' : undefined}><span class="nav-number"><Icon name="code" size={14} /></span><span>脚本与模板</span></a>}
+      {documents.filter((document) => document.group === group).map((document) => (
+        <a class:list={['nav-link', { active: currentPath === documentHref(document) }]} href={documentHref(document)} aria-current={currentPath === documentHref(document) ? 'page' : undefined}>
+          <span class="nav-number">{document.number || '·'}</span><span>{document.title}</span>
+        </a>
+      ))}
+    </section>
+  ))}
+</nav>

@@ -1,0 +1,28 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import Icon from '../../components/Icon.astro';
+import { documents, documentHref } from '../../data/catalog.mjs';
+import { getDocument } from '../../lib/content';
+export function getStaticPaths() {
+  return documents.map((document, index) => ({ params: { slug: document.slug }, props: { document, index } }));
+}
+const { document, index } = Astro.props;
+const markdown = getDocument(document.source);
+const Content = markdown.Content;
+const headings = markdown.getHeadings();
+const previous = documents[index - 1];
+const next = documents[index + 1];
+---
+<SiteLayout title={document.title} description={document.description} headings={headings}>
+  <div class="document-header">
+    <div class="breadcrumb"><a href="/">HPC Guide</a><Icon name="chevron" size={13} /><span>{document.group}</span></div>
+    <div class="eyebrow">{document.number ? `CHAPTER ${document.number}` : document.group === '开始使用' ? 'GETTING STARTED' : 'REFERENCE'}</div>
+    <h1>{document.title}</h1><p>{document.description}</p>
+    <a class="source-link" href={`/downloads/${document.source}`} download><Icon name="download" size={14} />下载原始 Markdown</a>
+  </div>
+  <article class="prose"><Content /></article>
+  <nav class="page-pagination" aria-label="上下篇">
+    {previous ? <a href={documentHref(previous)}><span>上一篇</span><strong>← {previous.title}</strong></a> : <span></span>}
+    {next ? <a href={documentHref(next)} class="pagination-next"><span>下一篇</span><strong>{next.title} →</strong></a> : <a href="/scripts/" class="pagination-next"><span>继续探索</span><strong>脚本与模板 →</strong></a>}
+  </nav>
+</SiteLayout>
