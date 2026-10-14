@@ -1,79 +1,116 @@
-# 快速上手：提交第一个 CPU 作业
+# 快速上手：跑通第一个作业
 
-目标：不用安装第三方库，完成 **上传 → 提交 → 看日志 → 下载**。使用免费的 `debug` 分区，仅做短时测试。
+**目标：** 大约 15 分钟，登录 HPC，提交一个免费的测试作业，看到它在计算节点上运行的结果。不需要安装任何软件，也不需要先上传代码。
 
-## 1. 在本机配置 SSH
+## 0. 开始前确认
 
-先连接校园网或学校 VPN。参照 [SSH 模板](templates/ssh_config.example)，把其中的 `YOUR_USERNAME` 换成账号，合并进本机 `~/.ssh/config`。初次登录要核验服务器指纹，见 [SSH 说明](docs/02-login-and-ssh.md)。
+- **有 HPC 账号。** 还没有的话，在 [OneStop](https://onestop-online.hkust-gz.edu.cn) → IT 服务 → HPC Platform Application 申请，需要导师审批。
+- **在校园网内，或已连接学校 VPN。** 否则连接会超时。
+- **有一个终端。** macOS / Linux 用系统自带的"终端"；Windows 10/11 用 PowerShell（已自带 `ssh` 和 `scp`）。
 
-**本机：**
+## 1. 登录
+
+**本机：** 把 `你的用户名` 换成 HPC 账号
 
 ```bash
-ssh hkust-hpc2
+ssh 你的用户名@hpc2login.hpc.hkust-gz.edu.cn
 ```
+
+- 输入密码时屏幕**不显示任何字符**，这是正常的，输完按回车即可。
+- 第一次连接会询问 `Are you sure you want to continue connecting`。这是在确认服务器的身份（主机指纹），可以向管理员或可信渠道核对后输入 `yes`。详见 [登录与 SSH](docs/02-login-and-ssh.md)。
+
+看到新的命令提示符、没有报错，就说明你已经在**登录节点**上了。
+
+## 2. 写一个作业脚本
+
+作业脚本就是一个普通的 Bash 脚本，开头用 `#SBATCH` 写明要申请的资源。下面的命令会新建目录 `hpc-first`，并在里面生成脚本 `hello.sbatch`。整段复制、粘贴、回车即可。
 
 **登录节点：**
 
 ```bash
-whoami
-hostname
-printf '家目录：%s\n' "$HOME"
-mkdir -p "$HOME/hpc-tutorial"
+mkdir -p ~/hpc-first && cd ~/hpc-first
+cat > hello.sbatch <<'EOF'
+#!/bin/bash
+#SBATCH --job-name=hello
+#SBATCH --partition=debug
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=2
+#SBATCH --mem=2G
+#SBATCH --time=00:05:00
+#SBATCH --output=hello-%j.out
+
+echo "Job ID: $SLURM_JOB_ID"
+echo "Node:   $(hostname)"
+echo "CPUs:   $SLURM_CPUS_PER_TASK"
+echo "Python: $(python3 --version 2>&1)"
+sleep 60
+echo "Done."
+EOF
+cat hello.sbatch
 ```
 
-## 2. 上传本项目
+最后一行 `cat` 会把脚本内容打印出来，方便你确认。每个 `#SBATCH` 的意思：
 
-打开另一个本机终端；`cd` 后面的路径换成本项目在本机的位置。
+| 这一行 | 意思 |
+|---|---|
+| `--job-name=hello` | 作业名，查看队列时显示 |
+| `--partition=debug` | 用免费的调试分区（最长 30 分钟，只用于测试） |
+| `--nodes=1`、`--ntasks=1` | 在 1 台计算节点上运行 1 个程序 |
+| `--cpus-per-task=2` | 给这个程序 2 个 CPU 核 |
+| `--mem=2G` | 内存 2 GB |
+| `--time=00:05:00` | 最多运行 5 分钟，到时自动结束 |
+| `--output=hello-%j.out` | 程序的输出写进这个文件，`%j` 会替换成作业号 |
 
-**本机：**
+`#SBATCH` 下面是普通命令，会在计算节点上执行。`sleep 60` 只是让作业多停留一分钟，方便你观察它的状态。
 
-```bash
-cd '/你的本机路径/[HKUST(GZ)]HPC-Slurm'
-rsync -av --exclude='.git/' --exclude='logs/' --exclude='outputs/' \
-  --exclude='node_modules/' --exclude='dist/' --exclude='.astro/' \
-  ./ hkust-hpc2:hpc-tutorial/
-```
-
-这里远端的 `hpc-tutorial/` 是 SSH 用户家目录下的目录，不需要手填 `/hpc2hdd/home/用户名`。
-
-## 3. 提交测试
+## 3. 提交并观察
 
 **登录节点：**
 
 ```bash
-cd "$HOME/hpc-tutorial"
-mkdir -p logs
-sbatch slurm/debug_cpu.sbatch
+sbatch hello.sbatch
+```
+
+成功时会看到 `Submitted batch job 123456`。这串数字就是**作业号**，记下来。
+
+**登录节点：** 查看自己的作业，可以隔几秒多执行几次
+
+```bash
 squeue -u "$USER"
 ```
 
-预期看到 `Submitted batch job 数字`。记录这个作业号；`PD` 是排队，`R` 是运行。示例很短，可能查询时已经结束。
+看 `ST` 这一列：`PD` 表示排队中，`R` 表示运行中。作业从列表中消失，说明已经结束。
 
 ## 4. 查看结果
 
-把下面 `123456` 换成刚才的作业号。
-
-**登录节点：**
+**登录节点：** 把 `123456` 换成你的作业号
 
 ```bash
 JOB_ID=123456
+cat "hello-${JOB_ID}.out"
 sacct -j "$JOB_ID" --format=JobID,State,Elapsed,ExitCode
-cat "logs/debug-${JOB_ID}.out"
-cat "logs/debug-${JOB_ID}.err"
-cat "outputs/hello-${JOB_ID}/result.json"
 ```
 
-成功时状态为 `COMPLETED`、退出码为 `0:0`，输出中有计算节点名和申请的 CPU 数量。
+输出文件里应该有作业号、节点名、`CPUs: 2` 和 Python 版本，最后一行是 `Done.`。节点名和登录节点的不同，说明程序确实运行在计算节点上。`sacct` 显示 `COMPLETED`、退出码 `0:0`，表示作业成功结束。
 
-## 5. 下载到本机
+## 5. 下载到本机（可选）
 
-**本机，在本项目目录下：**
+**本机：** 新开一个本机终端（不是登录 HPC 的那个窗口）
 
 ```bash
-rsync -av hkust-hpc2:hpc-tutorial/outputs/ ./outputs/
-rsync -av hkust-hpc2:hpc-tutorial/logs/ ./logs/
+scp 你的用户名@hpc2login.hpc.hkust-gz.edu.cn:hpc-first/hello-*.out .
 ```
 
-完成的作业已自动释放资源，无须再操作。未完成但不想继续时，在登录节点执行 `scancel 具体作业号`。
+文件会下载到本机的当前目录。`scp` 在 macOS、Linux 和 Windows PowerShell 中都可以使用。
 
-下一步：[申请交互式调试节点](docs/06-debug-and-interactive.md) → [配置 Python 环境](docs/04-software-environment.md) → [正式训练与并行](docs/07-training-and-batch.md)。
+## 你刚才做了什么
+
+1. 在**本机**用 SSH 登录到**登录节点**。
+2. 写了一份"预约单"（作业脚本），用 `sbatch` 交给 **Slurm**。
+3. Slurm 在某台**计算节点**上分配了 2 核、2 GB，运行脚本，结束后自动收回资源。
+4. 你在登录节点查看了输出，并把它下载到本机。
+
+作业结束后资源会自动释放，不需要做任何清理。如果作业还在运行而你不想要了，执行 `scancel 作业号`。
+
+**下一步：** [认识 HPC](docs/01-hpc-overview.md) → [配置免密登录](docs/02-login-and-ssh.md) → [上传自己的代码](docs/03-storage-and-data.md)

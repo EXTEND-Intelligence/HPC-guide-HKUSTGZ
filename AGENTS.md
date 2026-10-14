@@ -1,20 +1,64 @@
-# Tutorial maintenance rules
+# 维护规则
 
-- Scope: concise Chinese documentation for HKUST(GZ) HPC, primarily Phase II SSH + Slurm.
-- Keep commands copyable. Label their execution location: local, login node, or allocated compute node.
-- Use official sources for platform facts. Record verification dates in `references/verified-settings.md`.
-- Do not confuse management hostnames with platform phases, or reuse Phase II Slurm scripts on other schedulers.
-- Separate documented prices/limits from live account permissions/QoS. Never invent retention guarantees.
-- Never store passwords, private keys, tokens, real user credentials, or personal experiment data.
-- Keep examples lightweight. Do not run training on login nodes. Do not submit/cancel real jobs without a user request.
-- Scripts must use one task plus `--cpus-per-task` for one Python process, unique output directories, and explicit Python environments.
-- Create `logs/` before submission; Slurm opens output files before the script starts.
-- Validate Bash syntax, Python examples, array parameter mapping, Markdown links, and budget arithmetic after changes.
-- Generated logs/results/environments are ignored by Git; keep teaching source and templates tracked.
-- Do not commit/push or change SSH trust settings unless requested.
-- The Astro website reads existing Markdown/scripts directly; do not duplicate tutorial content into website-only copies.
-- Maintain public page/resource mappings in `src/data/catalog.mjs`; only allowlisted teaching sources may be downloaded or indexed.
-- Keep Markdown relative links usable outside the website; rewrite them only during rendering.
-- After website changes, run `npm run build` and check desktop/mobile navigation, search, theme and code copying in a browser.
-- With the dev/preview server running, use `npm run test:http -- <local-url>` to check actual download routes, not only generated files.
-- Website development is local; do not run the web dev server on HPC login nodes.
+本项目是 HKUST(GZ) HPC 的**新生简明教程**，不是官方手册的替代品。官方文档负责完整细节；本教程只回答新同学最先遇到的问题：用最短路径跑通、用对、不浪费经费。
+
+## 读者与范围
+
+- 读者：刚入学的研究生，会写 Python，但可能没用过 Linux 服务器或集群；本机可能是 Windows、macOS 或 Linux。
+- 主线：二期集群，SSH + Slurm，CPU 作业为主，GPU 可选。一期/三期/四期、门户网页提交、Docker 只做一句话说明并指向官方手册。
+- 不写个人研究专属内容（具体算法、环境名、指标）。示例统一用通用的 `train.py --seed ...`。
+
+## 写作风格
+
+- 每章开头一句话：读完能做到什么。
+- 先给能照做的步骤，再解释原理；原理用一两句话或一个类比讲清，不展开。
+- 术语首次出现写成"中文（英文）"并用一句话解释；全站用词保持一致（见术语表）。
+- 一段只讲一件事。能用表格对比的，不写成长段落。
+- 命令块后写明"成功的标志"或"预期看到什么"。
+- 提醒用引用块：`> **注意：**`（会出错、花钱或丢数据）、`> **提示：**`（省事技巧）。每章最多 3 个。
+- 不确定性集中说明：正文只写数字，并在章节内说一次"以平台实时配置为准"；核验细节放 `references/verified-settings.md`，不要每段都重复免责声明。
+- 少数人才需要的内容放到章节末尾的"进阶"小节。
+- 单章尽量不超过约 150 行 Markdown；更长就拆分或删减。
+
+## 命令块约定
+
+- 每个代码块前一行写位置标签，格式固定，方便网站以后识别：`**本机：** 说明`、`**登录节点：** 说明`、`**计算节点：** 说明`，或 `**文件：** 说明`（表示文件内容或脚本片段，不直接执行）。说明部分可省略。
+- "计算节点"指已经通过 Slurm 分配、正在其 shell 中操作的计算节点。
+- 命令必须可以直接复制。需要替换的值用中文占位（如 `你的用户名`），或在开头用变量集中给出（如 `JOB_ID=123456`）。不要用 `<...>` 占位，复制进 shell 会被当成重定向。
+- 跨平台命令要注明 Windows 的差异（PowerShell 自带 `ssh`、`scp`，没有 `rsync`、`ssh-copy-id`、`chmod`）。
+
+## 术语表
+
+| 统一写法 | 不要混用 |
+|---|---|
+| 登录节点 | 登录机、跳板机、前端 |
+| 计算节点 | 计算机器、worker |
+| 作业、作业号 | job、job id（数组中的单项称"数组项"） |
+| 分区 | 队列（首次出现可注明"也常叫队列"） |
+| 核、CPU 核 | 线程（除非确实指线程） |
+| 家目录（`$HOME`） | 主目录、用户目录 |
+
+## 平台事实
+
+- 平台事实只用官方来源，核验日期记在 `references/verified-settings.md`。更新价格或分区时，同步检查正文、脚本、命令速查和预算算例。
+- 不要把管理节点名（如 `mgmt-4`）当作平台期数；二期的 Slurm 脚本不要套用到其他平台。
+- 文档公布的价格/上限与用户账号的实时权限/QoS 分开写。不承诺数据保留期限。
+
+## 安全与示例
+
+- 不存放密码、私钥、token、真实账号或个人实验数据。
+- 示例保持轻量。不在登录节点跑训练。未经用户要求，不提交或取消真实作业。
+- 单个 Python 进程的脚本用 `--ntasks=1` 加 `--cpus-per-task`；输出目录唯一；显式指定 Python 解释器。
+- 脚本把日志写进 `logs/` 时，提交前先建好该目录（Slurm 在脚本运行前就打开日志文件）。
+- 改动后检查：Bash 语法（包括文档里的内联脚本）、Python 示例、数组参数映射、Markdown 链接、预算算术。
+- 生成的日志、结果、环境不进 Git；教学源文件和模板进 Git。
+- 未经要求不 commit/push，不修改 SSH 信任设置。
+
+## 网站
+
+- Astro 网站直接读取现有 Markdown 和脚本，不另建网站专用副本。网站开发说明见 `CONTRIBUTING.md`。
+- 公开页面和资源的映射维护在 `src/data/catalog.mjs`，只有登记过的教学文件可以被下载和索引。Markdown 里链接到未登记的文件会导致构建失败；需要提到这类文件（如 `CONTRIBUTING.md`）时用行内代码，不用链接。
+- Markdown 相对链接要在网站之外（GitHub、本地编辑器）也能用，只在渲染时改写。
+- 网站自带上一篇/下一篇导航，Markdown 章节末尾只放"返回目录"和相关官方链接。
+- 改动网站后运行 `npm run build`，并在浏览器检查桌面/移动端导航、搜索、主题和代码复制；dev 或 preview 运行时，用 `npm run test:http -- <本地地址>` 检查真实下载路由。
+- 网站只在本机开发，不在 HPC 登录节点运行 dev server。

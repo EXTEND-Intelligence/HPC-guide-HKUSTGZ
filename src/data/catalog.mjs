@@ -3,26 +3,27 @@ export const verifiedAt = '2026-10-13';
 export const officialUrl = 'https://docs.hpc.hkust-gz.edu.cn/';
 
 export const documents = [
-  { slug: 'overview', source: 'README.md', title: '使用总览', description: '先认识节点、资源与一次作业的完整流程。', group: '开始使用', number: '', keywords: '入门 HPC SSH Slurm Docker' },
-  { slug: 'quickstart', source: 'QUICKSTART.md', title: '快速上手', description: '上传、提交、查看、下载：跑通第一个 CPU 作业。', group: '开始使用', number: '', keywords: '第一个作业 免费 debug 测试' },
-  { slug: 'hpc-overview', source: 'docs/01-hpc-overview.md', title: 'HPC 与节点', description: '平台区别、账号权限、登录节点与计算节点。', group: '基础与准备', number: '01', keywords: '一期 二期 三期 四期 EDA mgmt' },
-  { slug: 'login-and-ssh', source: 'docs/02-login-and-ssh.md', title: '登录与 SSH', description: '登录集群、设置密钥、核验主机指纹。', group: '基础与准备', number: '02', keywords: 'VPN 免密 私钥 公钥 指纹 认证' },
-  { slug: 'storage-and-data', source: 'docs/03-storage-and-data.md', title: '存储与数据', description: '家目录、SSD、作业数据区与 rsync 传输。', group: '基础与准备', number: '03', keywords: '上传 下载 HOME HDD SSD spooler' },
-  { slug: 'software-environment', source: 'docs/04-software-environment.md', title: 'Python 与 Git', description: '为训练准备独立环境，同步 GitHub 代码。', group: '基础与准备', number: '04', keywords: 'venv pip torch module GitHub pull' },
-  { slug: 'slurm-basics', source: 'docs/05-slurm-basics.md', title: 'Slurm 基础', description: '申请资源、查看队列、理解限制、释放作业。', group: '申请与运行', number: '05', keywords: 'sbatch squeue scancel sacct QoS 内存 释放' },
-  { slug: 'debug-and-interactive', source: 'docs/06-debug-and-interactive.md', title: '交互式调试', description: '申请短时调试资源，进入真正的计算节点。', group: '申请与运行', number: '06', keywords: 'srun salloc debug 交互 exit 免费' },
-  { slug: 'training-and-batch', source: 'docs/07-training-and-batch.md', title: '训练与并行', description: '正式 CPU 训练、数组作业与可选 GPU。', group: '申请与运行', number: '07', keywords: '种子 array GPU RL 多核 并发' },
-  { slug: 'pricing-and-budget', source: 'docs/08-pricing-and-budget.md', title: '计费与预算', description: '计算与存储如何收费，如何估算一批实验。', group: '费用与维护', number: '08', keywords: '价格 导师 PBMS 账单 费用 0.02' },
-  { slug: 'results-and-reproducibility', source: 'docs/09-results-and-reproducibility.md', title: '结果与复现', description: '保存原始指标、配置、模型与评估协议。', group: '费用与维护', number: '09', keywords: 'checkpoint CSV reward 胜率 备份 论文' },
-  { slug: 'troubleshooting', source: 'docs/10-troubleshooting.md', title: '常见问题', description: '排队、认证、内存、时限和日志的排查入口。', group: '费用与维护', number: '10', keywords: 'FAILED OOM TIMEOUT 报错 作业消失' },
-  { slug: 'examples', source: 'examples/README.md', title: '示例说明', description: '每个示例和提交脚本的依赖、参数与输出。', group: '脚本与参考', number: '', keywords: '示例 hello train_demo 保存内容' },
-  { slug: 'experiment-layout', source: 'templates/experiment-layout.md', title: '实验目录规范', description: '用场景、算法、种子和 run-id 整理实验。', group: '脚本与参考', number: '', keywords: '目录 full local 命名 输出' },
+  { slug: 'overview', source: 'README.md', title: '使用总览', description: '一分钟理解 HPC，新手必记 5 条，以及推荐的阅读顺序。', group: '开始使用', number: '', keywords: '入门 新生 HPC SSH Slurm 阅读路线' },
+  { slug: 'quickstart', source: 'QUICKSTART.md', title: '快速上手', description: '登录、写脚本、提交、看结果：15 分钟跑通第一个作业。', group: '开始使用', number: '', keywords: '第一个作业 免费 debug 测试 sbatch hello' },
+  { slug: 'hpc-overview', source: 'docs/01-hpc-overview.md', title: '认识 HPC', description: '登录节点与计算节点、作业与分区、学校的几个平台。', group: '基础准备', number: '01', keywords: '节点 分区 队列 作业 状态 一期 二期 三期 四期 EDA mgmt' },
+  { slug: 'login-and-ssh', source: 'docs/02-login-and-ssh.md', title: '登录与 SSH', description: '密码登录、密钥免密登录、设置快捷名。', group: '基础准备', number: '02', keywords: 'VPN 免密 私钥 公钥 指纹 Windows PowerShell config' },
+  { slug: 'storage-and-data', source: 'docs/03-storage-and-data.md', title: '文件与传输', description: '文件放在哪里，用 rsync、scp 或 Git 把代码传到 HPC。', group: '基础准备', number: '03', keywords: '上传 下载 HOME HDD SSD rsync scp GitHub clone pull' },
+  { slug: 'slurm-basics', source: 'docs/04-slurm-basics.md', title: 'Slurm 作业', description: '看懂作业脚本，按需申请资源，查看、取消与排队原因。', group: '运行作业', number: '04', keywords: 'sbatch squeue scancel sacct scontrol QoS 内存 排队 PD' },
+  { slug: 'debug-and-interactive', source: 'docs/05-debug-and-interactive.md', title: '交互式调试', description: '申请一个计算节点直接调试，用完立即释放。', group: '运行作业', number: '05', keywords: 'srun salloc debug 交互 exit 免费 GPU nvidia-smi' },
+  { slug: 'software-environment', source: 'docs/06-software-environment.md', title: 'Python 环境', description: '建好 venv 或 conda 环境，并在作业中用对 Python。', group: '运行作业', number: '06', keywords: 'venv conda pip torch module PYTHON_BIN CUDA' },
+  { slug: 'training-and-batch', source: 'docs/07-training-and-batch.md', title: '训练与批量实验', description: '正式 CPU 训练、多组参数的数组作业、GPU 作业。', group: '运行作业', number: '07', keywords: '种子 array 数组 GPU A40 多核 并发' },
+  { slug: 'pricing-and-budget', source: 'docs/08-pricing-and-budget.md', title: '费用与预算', description: '计算和存储怎么收费，如何估算一批实验的花费。', group: '费用与维护', number: '08', keywords: '价格 导师 PBMS 账单 费用 0.02 省钱' },
+  { slug: 'results-and-reproducibility', source: 'docs/09-results-and-reproducibility.md', title: '结果管理', description: '该保存什么、目录怎么组织、怎样备份和复现。', group: '费用与维护', number: '09', keywords: 'checkpoint CSV 指标 备份 论文 复现 sacct' },
+  { slug: 'troubleshooting', source: 'docs/10-troubleshooting.md', title: '常见问题', description: '按登录、提交、运行、结果四个阶段查找报错原因。', group: '费用与维护', number: '10', keywords: 'FAILED OOM TIMEOUT 报错 作业消失 Permission denied 求助' },
+  { slug: 'cheatsheet', source: 'references/cheatsheet.md', title: '命令速查', description: '最常用的命令、作业状态、#SBATCH 参数和环境变量。', group: '脚本与参考', number: '', keywords: '速查 命令 cheatsheet 状态 SBATCH 环境变量' },
+  { slug: 'examples', source: 'examples/README.md', title: '示例说明', description: '每个示例和提交脚本的依赖、参数与输出。', group: '脚本与参考', number: '', keywords: '示例 hello train_demo 保存内容 PYTHON_BIN' },
+  { slug: 'experiment-layout', source: 'templates/experiment-layout.md', title: '实验目录模板', description: '代码、数据、结果分开放，每次运行一个独立目录。', group: '脚本与参考', number: '', keywords: '目录 命名 输出 run-id' },
   { slug: 'official-links', source: 'references/official-links.md', title: '官方参考', description: '平台手册、价格、账号申请和支持渠道。', group: '脚本与参考', number: '', keywords: '官方 文档 管理员 支持' },
   { slug: 'verified-settings', source: 'references/verified-settings.md', title: '核验与边界', description: '核验日期、可变参数与已验证的范围。', group: '脚本与参考', number: '', keywords: '核验 限制 时间 日期 权限' },
 ];
 
 export const resources = [
-  { slug: 'debug-cpu', source: 'slurm/debug_cpu.sbatch', title: '免费 CPU 调试', language: 'bash', group: 'Slurm 脚本', description: '标准库小测试，无需先安装 PyTorch。', specification: '2 核 · 2 GB · 10 分钟', related: 'quickstart' },
+  { slug: 'debug-cpu', source: 'slurm/debug_cpu.sbatch', title: '免费 CPU 调试', language: 'bash', group: 'Slurm 脚本', description: '标准库小测试，无需先安装 PyTorch。', specification: '2 核 · 2 GB · 10 分钟', related: 'slurm-basics' },
   { slug: 'train-cpu', source: 'slurm/train_cpu.sbatch', title: '单作业 CPU 训练', language: 'bash', group: 'Slurm 脚本', description: '显式调用虚拟环境，记录输出，错误时退出。', specification: '8 核 · 16 GB · 12 小时上限', related: 'training-and-batch' },
   { slug: 'train-array', source: 'slurm/train_array.sbatch', title: '多种子并行实验', language: 'bash', group: 'Slurm 脚本', description: '3 个学习率 × 5 个种子，默认最多并发 3 项。', specification: '15 项 · 每项 8 核 / 16 GB', related: 'training-and-batch' },
   { slug: 'train-gpu', source: 'slurm/train_gpu.sbatch', title: '单 GPU 训练', language: 'bash', group: 'Slurm 脚本', description: '先检查 CUDA，再执行示例；需要 GPU 环境。', specification: '1 A40 · 8 核 · 16 GB', related: 'training-and-batch' },
@@ -33,7 +34,7 @@ export const resources = [
   { slug: 'requirements', source: 'examples/requirements.txt', title: '示例依赖', language: 'text', group: '配置模板', description: 'CPU 示例依赖；安装方式参照环境章节。', specification: 'requirements.txt', related: 'software-environment' },
 ];
 
-export const navigationGroups = ['开始使用', '基础与准备', '申请与运行', '费用与维护', '脚本与参考'];
+export const navigationGroups = ['开始使用', '基础准备', '运行作业', '费用与维护', '脚本与参考'];
 export const documentHref = (document) => `/guide/${document.slug}/`;
 export const resourceHref = (resource) => `/scripts/${resource.slug}/`;
 export const sourceRoutes = new Map([
