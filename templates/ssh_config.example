@@ -3,10 +3,11 @@
 Host hkust-hpc2
     HostName hpc2login.hpc.hkust-gz.edu.cn
     User YOUR_USERNAME
-    IdentityFile ~/.ssh/id_ed25519
+    IdentityFile ~/.ssh/id_ed25519_hkustgz
     IdentitiesOnly yes
     ServerAliveInterval 60
     ServerAliveCountMax 3
 
 # If using password login, omit IdentityFile and IdentitiesOnly.
-# Keep host-key checking enabled; verify any new/changed fingerprint.
+# Keep host-key checking enabled. If the host key changes, remove the old entry:
+#   ssh-keygen -R hpc2login.hpc.hkust-gz.edu.cn

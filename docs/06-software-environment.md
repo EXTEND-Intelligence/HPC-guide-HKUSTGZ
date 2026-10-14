@@ -46,7 +46,7 @@ exit
 
 ## 在作业里使用环境
 
-本仓库的 CPU 脚本默认使用 `$HOME/venvs/hpc-tutorial/bin/python`。想用自己的环境时，提交前设置 `PYTHON_BIN`：
+本仓库的 CPU 脚本默认使用 `$HOME/venvs/hpc-tutorial/bin/python`。想用自己的环境时，提交前设置 `PYTHON_BIN`。
 
 **登录节点：** 路径换成你自己的环境
 
@@ -57,7 +57,7 @@ sbatch slurm/train_cpu.sbatch
 
 脚本开头会检查这个路径；找不到时会直接报错退出，而不是悄悄用错 Python。
 
-自己写作业脚本时，直接写完整路径：
+自己写作业脚本时，直接写完整路径。
 
 **文件：** 作业脚本中的一行
 

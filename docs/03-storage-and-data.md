@@ -49,9 +49,9 @@ $HOME/
 
 ### 方式 A：rsync / scp
 
-`rsync` 只传有变化的文件，适合反复同步（macOS、Linux、Windows 的 WSL 可用）。先加 `--dry-run` 预览要传哪些文件，确认无误后去掉它再执行。
+`rsync` 只传有变化的文件，适合反复同步。Windows PowerShell 没有 `rsync`，可以改用下面的 `scp`，或在 WSL 中使用 rsync。先加 `--dry-run` 预览要传哪些文件，确认无误后去掉它再执行。
 
-**本机：** 上传项目，跳过 Git 历史、虚拟环境和结果
+**本机（macOS / Linux / WSL）：** 上传项目，跳过 Git 历史、虚拟环境和结果
 
 ```bash
 rsync -av --dry-run \
@@ -59,7 +59,7 @@ rsync -av --dry-run \
   ./my-project/ hkust-hpc2:my-project/
 ```
 
-**本机：** 下载结果，跳过模型大文件
+**本机（macOS / Linux / WSL）：** 下载结果，跳过模型大文件
 
 ```bash
 rsync -av --exclude='*.pt' --exclude='*.pth' --exclude='checkpoints/' \
@@ -71,9 +71,9 @@ rsync -av --exclude='*.pt' --exclude='*.pth' --exclude='checkpoints/' \
 - 源路径末尾的 `/` 表示"传目录里面的内容"。不加 `/` 会在目标处多套一层目录。
 - 不要随手加 `--delete`，它会删除目标端多出来的文件。
 
-**Windows PowerShell 没有 `rsync`**，可以用 `scp`（也可以在 WSL 中用 rsync，或使用 WinSCP 等图形工具）：
+`scp` 各系统通用，适合一次性传输；也可以使用 WinSCP 等图形工具。
 
-**本机：**
+**本机：** 上传整个目录；下载单个文件
 
 ```bash
 scp -r ./my-project hkust-hpc2:
@@ -93,7 +93,7 @@ cd ~
 git clone https://github.com/你的账号/你的仓库.git my-project
 ```
 
-更新代码前，先确认没有未提交的本地改动：
+更新代码前，先确认没有未提交的本地改动。
 
 **登录节点：**
 
@@ -107,14 +107,37 @@ git pull --ff-only     # 只做快进更新，不会自动合并
 
 **私有仓库：** 在 HPC 上**另外生成一把密钥**并添加到 GitHub，不要把本机私钥复制到 HPC。
 
-**登录节点：** 若提示 `Overwrite (y/n)?`，输入 `n` 并复用已有的密钥
+**第一步：检查是否已经生成过。**
+
+**登录节点：**
 
 ```bash
-ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519_github -C "hpc-github"
+ls ~/.ssh/id_ed25519_github.pub
+```
+
+列出了这个文件，说明之前已经生成过，跳到第三步。提示找不到文件，继续第二步。
+
+**第二步：生成密钥。**
+
+**登录节点：**
+
+```bash
+ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519_github -C "hkustgz-hpc-github"
+```
+
+出现提示时一路按回车即可。
+
+**第三步：把公钥添加到 GitHub。**
+
+**登录节点：**
+
+```bash
 cat ~/.ssh/id_ed25519_github.pub
 ```
 
-把输出的公钥添加到 GitHub → Settings → SSH and GPG keys，然后在 **HPC 上的** `~/.ssh/config` 末尾追加：
+复制输出的整行内容，添加到 GitHub → Settings → SSH and GPG keys。
+
+**第四步：配置并测试。** 在 **HPC 上的** `~/.ssh/config` 末尾追加以下内容。
 
 **文件：** HPC 上的 `~/.ssh/config`
 

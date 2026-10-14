@@ -20,7 +20,7 @@ sbatch slurm/train_cpu.sbatch
 
 **查看运行中的日志：** `tail -f logs/cpu-作业号.out`，按 `Ctrl+C` 停止查看（不会影响作业）。
 
-**改参数不用改脚本。** 在提交命令前加环境变量，脚本会读取它们：
+**改参数不用改脚本。** 在提交命令前加环境变量，脚本会读取它们。
 
 **登录节点：**
 
@@ -28,7 +28,7 @@ sbatch slurm/train_cpu.sbatch
 STEPS=2000 SEED=37 sbatch slurm/train_cpu.sbatch
 ```
 
-资源也可以在提交时覆盖，命令行参数优先于脚本里的 `#SBATCH`：
+资源也可以在提交时覆盖，命令行参数优先于脚本里的 `#SBATCH`。
 
 **登录节点：**
 
@@ -79,7 +79,7 @@ squeue -r -u "$USER"
 
 `-r` 把每个数组项分行显示。日志文件是 `logs/array-主作业号_编号.out`。
 
-想放宽同时运行的数量，可以在提交时覆盖。这只是允许，实际能同时跑几项仍取决于空闲资源和账号上限：
+想放宽同时运行的数量，可以在提交时覆盖。这只是允许，实际能同时跑几项仍取决于空闲资源和账号上限。
 
 **登录节点：**
 
@@ -95,7 +95,7 @@ sbatch --array=0-14 slurm/train_array.sbatch
 
 [`slurm/train_gpu.sbatch`](../slurm/train_gpu.sbatch) 申请 A40 分区 `i64m1tga40u`：1 块 GPU、8 核、16 GB，最长 2 小时。需要先建好 CUDA 版 PyTorch 环境（见 [Python 环境](06-software-environment.md)）。
 
-和 CPU 脚本相比，关键区别只有两行：
+和 CPU 脚本相比，关键区别只有两行。
 
 **文件：** `slurm/train_gpu.sbatch` 中的 GPU 设置
 

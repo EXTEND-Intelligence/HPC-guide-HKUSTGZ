@@ -7,6 +7,7 @@
 | 我想… | 命令 |
 |---|---|
 | 登录 | `ssh hkust-hpc2` |
+| 指纹变了，删除旧记录 | `ssh-keygen -R hpc2login.hpc.hkust-gz.edu.cn` |
 | 上传目录（rsync） | `rsync -av ./my-project/ hkust-hpc2:my-project/` |
 | 下载结果（rsync） | `rsync -av hkust-hpc2:my-project/outputs/ ./outputs/` |
 | 上传目录（scp，Windows 也可用） | `scp -r ./my-project hkust-hpc2:` |

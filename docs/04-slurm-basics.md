@@ -4,7 +4,7 @@
 
 ## 作业脚本长什么样
 
-[快速上手](../QUICKSTART.md) 里你已经写过一个作业脚本。正式脚本的结构相同，下面是本仓库 [`slurm/train_cpu.sbatch`](../slurm/train_cpu.sbatch) 的开头部分：
+[快速上手](../QUICKSTART.md) 里你已经写过一个作业脚本。正式脚本的结构相同，下面是本仓库 [`slurm/train_cpu.sbatch`](../slurm/train_cpu.sbatch) 的开头部分。
 
 **文件：** `slurm/train_cpu.sbatch` 的资源申请部分
 
@@ -54,7 +54,7 @@
 
 ## 提交、查看、取消
 
-先在仓库根目录用免费的调试脚本练习（需要先完成 [第 03 章的练习](03-storage-and-data.md)，把本仓库放到 HPC 上）：
+先在仓库根目录用免费的调试脚本练习（需要先完成 [第 03 章的练习](03-storage-and-data.md)，把本仓库放到 HPC 上）。
 
 **登录节点：**
 

@@ -8,8 +8,8 @@
 |---|---|---|
 | `Connection timed out`，一直连不上 | 不在校园网或没连 VPN；地址写错 | 连上 VPN；核对地址 `hpc2login.hpc.hkust-gz.edu.cn`；确认账号已开通 |
 | `Permission denied (publickey)` | 用户名错误、私钥路径不对，或公钥没有添加到服务器 | 本机执行 `ssh -v hkust-hpc2`，看用的是哪把密钥；重新添加公钥。不要把私钥发给别人 |
-| `REMOTE HOST IDENTIFICATION HAS CHANGED` | 服务器的主机指纹变了 | 先向管理员核实，不要直接删除记录或关闭检查 |
-| `UNPROTECTED PRIVATE KEY FILE` 或 `Bad owner or permissions` | 本机 `~/.ssh` 的权限太宽 | macOS / Linux：`chmod 700 ~/.ssh`，再对配置文件和私钥执行 `chmod 600` |
+| `REMOTE HOST IDENTIFICATION HAS CHANGED` | 平台重装或更换了登录节点，本机记录的旧指纹对不上 | 本机执行 `ssh-keygen -R hpc2login.hpc.hkust-gz.edu.cn` 删除旧记录，再重新登录并接受新指纹，见 [登录与 SSH](02-login-and-ssh.md) |
+| `UNPROTECTED PRIVATE KEY FILE` 或 `Bad owner or permissions` | 本机 `~/.ssh` 的权限太宽 | macOS / Linux：执行 `chmod 700 ~/.ssh` 和 `chmod 600 ~/.ssh/config ~/.ssh/id_ed25519_hkustgz` |
 
 ## 提交与排队
 
