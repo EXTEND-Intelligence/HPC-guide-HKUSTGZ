@@ -41,7 +41,7 @@ const chapterCount = documents.filter((item) => item.number).length;
   </section>
 
   <section class="notice-section" aria-labelledby="notice-heading">
-    <div class="section-heading"><div><span class="section-kicker">使用须知</span><h2 id="notice-heading">使用前需要了解的五点</h2></div><a class="text-link" href="/guide/overview/">使用总览<Icon name="arrow" size={16} /></a></div>
+    <div class="section-heading"><div><span class="section-kicker">使用须知</span><h2 id="notice-heading">使用前需要了解的五点</h2></div><a class="text-link" href="/guide/quickstart/">快速开始<Icon name="arrow" size={16} /></a></div>
     <ol class="notice-grid">
       <li class="notice-item"><span class="notice-number">01</span><h3>登录节点不用于计算</h3><p>训练、评估和大量计算通过 Slurm 提交到计算节点运行。</p></li>
       <li class="notice-item"><span class="notice-number">02</span><h3>提交不等于运行</h3><p><code>sbatch</code> 只是提交申请；<code>PD</code> 为排队中，<code>R</code> 为正在运行。</p></li>
