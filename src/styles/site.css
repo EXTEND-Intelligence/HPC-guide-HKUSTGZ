@@ -179,14 +179,26 @@
   .workflow-card h3 { font-size: 18px; margin-bottom: 6px; font-weight: 650; }
   .workflow-card p { color: var(--muted); font-size: 12px; }
   .workflow-chip { display: inline-block; color: var(--faint); font: 10px var(--mono); border-top: 1px solid var(--border); margin-top: 21px; padding-top: 15px; width: 100%; }
-  .workflow-section > .inline-note { margin-top: 16px; }
-  .topics-section, .home-resources { margin-top: 65px; }
-  .topic-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
-  .topic-card { display: flex; align-items: center; gap: 14px; padding: 21px 18px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); transition: border-color .15s, transform .15s; }
-  .topic-card:hover { border-color: var(--accent); transform: translateY(-2px); }
-  .topic-icon { display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 9px; background: var(--accent-soft); color: var(--accent); }
-  .topic-card h3 { font-size: 13px; font-weight: 650; }
-  .topic-card p { font-size: 10px; color: var(--muted); margin-top: 4px; }
+  .notice-section, .path-section, .home-resources { margin-top: 65px; }
+  .notice-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 13px; list-style: none; margin: 0; padding: 0; }
+  .notice-item { padding: 20px 18px 19px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
+  .notice-number { display: block; margin-bottom: 12px; color: var(--accent); font: 650 10px var(--mono); letter-spacing: .05em; }
+  .notice-item h3 { font-size: 13px; font-weight: 650; line-height: 1.5; margin-bottom: 6px; }
+  .notice-item p { font-size: 11px; color: var(--muted); line-height: 1.8; }
+  .notice-item code { font-size: 10.5px; color: var(--accent); }
+  .path-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: stretch; }
+  .path-column { border: 1px solid var(--border); border-radius: 11px; background: var(--surface); overflow: hidden; }
+  .path-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding: 15px 18px; background: var(--surface-soft); border-bottom: 1px solid var(--border); }
+  .path-head h3 { font-size: 14px; font-weight: 650; }
+  .path-head span { color: var(--faint); font: 10px var(--mono); white-space: nowrap; }
+  .path-link { display: flex; align-items: center; gap: 12px; padding: 13px 18px; border-top: 1px solid var(--border); transition: background .15s; }
+  .path-link:first-of-type { border-top: 0; }
+  .path-link:hover { background: var(--accent-soft); }
+  .path-link:hover .card-arrow { color: var(--accent); }
+  .path-number { flex-shrink: 0; width: 22px; color: var(--accent); font: 650 11px var(--mono); }
+  .path-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .path-text strong { font-size: 13px; font-weight: 650; }
+  .path-text small { font-size: 10.5px; color: var(--muted); line-height: 1.65; }
   .card-arrow { margin-left: auto; color: var(--faint); }
   .script-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
   .script-card { display: block; padding: 22px 19px 17px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; transition: border-color .15s; }
@@ -324,7 +336,7 @@
     .page-toc { display: none; }
     .home-hero { gap: 35px; }
     .hero-copy h1 { font-size: 39px; }
-    .topic-grid { grid-template-columns: repeat(2, 1fr); }
+    .notice-grid { grid-template-columns: repeat(3, 1fr); }
     .script-grid { grid-template-columns: repeat(2, 1fr); }
   }
   @media (max-width: 850px) {
@@ -339,6 +351,8 @@
     .workflow-grid { gap: 10px; }
     .workflow-card { padding: 20px 16px; }
     .workflow-card p { font-size: 11px; }
+    .notice-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .path-grid { grid-template-columns: 1fr; gap: 12px; }
     .home-bottom { flex-wrap: wrap; }
     .home-bottom small { position: static; width: 100%; }
     .home-bottom { padding-bottom: 25px; }
@@ -383,11 +397,15 @@
     .workflow-card h3 { font-size: 17px; }
     .workflow-card p { font-size: 12px; }
     .workflow-chip { margin-top: 14px; padding-top: 11px; }
-    .topic-grid { grid-template-columns: 1fr; gap: 10px; }
-    .topic-card { padding: 19px; }
-    .topic-card h3 { font-size: 14px; }
-    .topic-card p { font-size: 11px; }
-    .topics-section, .home-resources { margin-top: 45px; }
+    .notice-grid { grid-template-columns: 1fr; }
+    .notice-item { padding: 16px 17px; }
+    .notice-number { margin-bottom: 6px; }
+    .notice-item h3 { font-size: 14px; }
+    .notice-item p { font-size: 12px; }
+    .path-head, .path-link { padding-left: 16px; padding-right: 16px; }
+    .path-text strong { font-size: 14px; }
+    .path-text small { font-size: 11px; }
+    .notice-section, .path-section, .home-resources { margin-top: 45px; }
     .script-grid { gap: 10px; }
     .script-card { padding: 18px 13px 14px; }
     .script-card h3 { font-size: 12px; }

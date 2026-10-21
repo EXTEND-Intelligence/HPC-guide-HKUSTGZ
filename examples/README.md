@@ -1,6 +1,6 @@
 # 示例与脚本
 
-这些小程序只用来演示提交流程，不是性能测试或科研实验。所有脚本都从仓库根目录提交，提交前先执行 `mkdir -p logs`。第一次使用请先看 [快速上手](../QUICKSTART.md)。
+这些示例程序只用于演示提交流程，不是性能测试或科研实验。所有脚本都从仓库根目录提交，提交前先执行 `mkdir -p logs`。首次使用请参考 [快速开始](../QUICKSTART.md)。
 
 ## Python 示例
 
@@ -41,7 +41,7 @@
 - `summary.json`：结果汇总
 - `checkpoint.pt`：模型
 
-`hello_hpc.py` 只保存 `result.json`。其中申请到的核数看 `slurm_cpus_per_task`；`os_cpu_count` 是整台机器可见的 CPU 数，不代表你可以使用这么多核。
+`hello_hpc.py` 只保存 `result.json`。其中申请到的核数看 `slurm_cpus_per_task`；`os_cpu_count` 是整台机器可见的 CPU 数，不代表作业可以使用这么多核。
 
 ## 设计上的安全措施
 

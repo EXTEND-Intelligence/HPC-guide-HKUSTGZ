@@ -4,9 +4,9 @@ import Icon from './Icon.astro';
 interface Props { currentPath: string; mobile?: boolean; }
 const { currentPath, mobile = false } = Astro.props;
 ---
-<nav class="guide-navigation" aria-label={mobile ? '移动端教程导航' : '教程导航'}>
+<nav class="guide-navigation" aria-label={mobile ? '移动端文档导航' : '文档导航'}>
   <a class:list={['nav-home', { active: currentPath === '/' }]} href="/" aria-current={currentPath === '/' ? 'page' : undefined}>
-    <Icon name="book" size={17} /> 教程首页
+    <Icon name="book" size={17} /> 首页
   </a>
   {navigationGroups.map((group) => (
     <section class="nav-group">

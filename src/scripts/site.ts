@@ -88,11 +88,11 @@ async function renderResults() {
       appendHighlighted(snippet, resultSnippet(entry, query), query);
       link.append(group, title, snippet); item.append(link); searchResults.append(item);
     }
-    searchStatus.textContent = !query ? '从入门开始，或输入命令、节点、费用等关键词。' : ranked.length ? `找到 ${ranked.length} 个匹配页面${ranked.length === 10 ? '（最多展示 10 项）' : ''}。` : '没有找到匹配内容，试试 sbatch、debug、费用或 SSH。';
+    searchStatus.textContent = !query ? '输入命令、节点、费用等关键词。' : ranked.length ? `找到 ${ranked.length} 个匹配页面${ranked.length === 10 ? '（最多展示 10 项）' : ''}。` : '没有找到匹配内容，试试 sbatch、debug、费用或 SSH。';
   } catch {
     if (revision === searchRevision) {
       searchResults.replaceChildren();
-      searchStatus.textContent = '搜索索引暂不可用。请从侧栏阅读教程，或稍后重试。';
+      searchStatus.textContent = '搜索索引暂不可用。请从侧栏浏览文档，或稍后重试。';
     }
   }
 }
