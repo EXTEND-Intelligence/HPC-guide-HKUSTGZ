@@ -3,9 +3,8 @@ export const verifiedAt = '2026-10-13';
 export const officialUrl = 'https://docs.hpc.hkust-gz.edu.cn/';
 
 export const documents = [
-  { slug: 'overview', source: 'README.md', title: '使用总览', description: 'HPC 概览、使用须知与阅读顺序。', group: '开始使用', number: '', keywords: '概览 须知 HPC SSH Slurm 阅读顺序' },
   { slug: 'quickstart', source: 'QUICKSTART.md', title: '快速开始', description: '登录、编写脚本、提交、查看结果，完成第一个作业。', group: '开始使用', number: '', keywords: '第一个作业 免费 debug 测试 sbatch hello' },
-  { slug: 'hpc-overview', source: 'docs/01-hpc-overview.md', title: '认识 HPC', description: '登录节点与计算节点、作业与分区、HKUST(GZ) 的 HPC 平台。', group: '基础准备', number: '01', keywords: '节点 分区 队列 作业 状态 一期 二期 三期 四期 EDA mgmt' },
+  { slug: 'hpc-overview', source: 'docs/01-hpc-overview.md', title: '认识 HPC', description: '集群概览、登录节点与计算节点、作业与分区、各期平台。', group: '基础准备', number: '01', keywords: '概览 流程 节点 分区 队列 作业 状态 一期 二期 三期 四期 EDA mgmt' },
   { slug: 'login-and-ssh', source: 'docs/02-login-and-ssh.md', title: '登录与 SSH', description: '密码登录、密钥免密登录、设置快捷名。', group: '基础准备', number: '02', keywords: 'VPN 免密 私钥 公钥 指纹 Windows PowerShell config' },
   { slug: 'storage-and-data', source: 'docs/03-storage-and-data.md', title: '文件与传输', description: '存储位置，以及用 rsync、scp 或 Git 传输代码与数据。', group: '基础准备', number: '03', keywords: '上传 下载 HOME HDD SSD rsync scp GitHub clone pull' },
   { slug: 'slurm-basics', source: 'docs/04-slurm-basics.md', title: 'Slurm 作业', description: '作业脚本结构、资源申请，查看、取消与排队原因。', group: '运行作业', number: '04', keywords: 'sbatch squeue scancel sacct scontrol QoS 内存 排队 PD' },
@@ -38,6 +37,8 @@ export const navigationGroups = ['开始使用', '基础准备', '运行作业',
 export const documentHref = (document) => `/guide/${document.slug}/`;
 export const resourceHref = (resource) => `/scripts/${resource.slug}/`;
 export const sourceRoutes = new Map([
+  // README.md is the GitHub landing page; on the website its role is played by the homepage.
+  ['README.md', '/'],
   ...documents.map((document) => [document.source, documentHref(document)]),
   ...resources.map((resource) => [resource.source, resourceHref(resource)]),
 ]);

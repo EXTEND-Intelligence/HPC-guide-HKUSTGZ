@@ -3,7 +3,6 @@ import { documents, resources } from '../data/catalog.mjs';
 
 type MarkdownModule = MarkdownInstance<Record<string, unknown>>;
 const markdown = {
-  ...import.meta.glob<MarkdownModule>('../../README.md', { eager: true }),
   ...import.meta.glob<MarkdownModule>('../../QUICKSTART.md', { eager: true }),
   ...import.meta.glob<MarkdownModule>('../../docs/*.md', { eager: true }),
   ...import.meta.glob<MarkdownModule>('../../examples/README.md', { eager: true }),
@@ -13,7 +12,7 @@ const markdown = {
 // Import as raw text at build time, not via runtime filesystem paths: Astro
 // prerenders from generated chunks whose locations differ from src/.
 const rawSources = {
-  ...import.meta.glob<string>('../../{README,QUICKSTART}.md', { eager: true, query: '?raw', import: 'default' }),
+  ...import.meta.glob<string>('../../QUICKSTART.md', { eager: true, query: '?raw', import: 'default' }),
   ...import.meta.glob<string>('../../docs/*.md', { eager: true, query: '?raw', import: 'default' }),
   ...import.meta.glob<string>('../../examples/*.{md,py,txt}', { eager: true, query: '?raw', import: 'default' }),
   ...import.meta.glob<string>('../../slurm/*.sbatch', { eager: true, query: '?raw', import: 'default' }),
