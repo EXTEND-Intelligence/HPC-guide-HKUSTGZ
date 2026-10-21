@@ -9,7 +9,7 @@ interface Props {
   home?: boolean;
   headings?: Array<{ depth: number; slug: string; text: string }>;
 }
-const { title, description = '香港科技大学（广州）HPC 二期简明教程：SSH 登录、Slurm 资源申请、训练、数据与计费。', home = false, headings = [] } = Astro.props;
+const { title, description = '香港科技大学（广州）HPC 二期简明使用手册：SSH 登录、Slurm 资源申请、训练、数据与计费。', home = false, headings = [] } = Astro.props;
 const currentPath = Astro.url.pathname;
 const toc = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 3);
 ---
@@ -20,13 +20,15 @@ const toc = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <meta name="theme-color" content="#f7f9f7" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" data-site-favicon />
     <title>{title} · HKUST(GZ) HPC Guide</title>
     <script is:inline>
       try {
         const saved = localStorage.getItem('hpc-theme');
         document.documentElement.dataset.theme = saved === 'dark' || saved === 'light' ? saved : (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
       } catch (_) {}
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', document.documentElement.dataset.theme === 'dark' ? '#0b0b0b' : '#f7f9f7');
+      document.querySelector('[data-site-favicon]').setAttribute('href', document.documentElement.dataset.theme === 'dark' ? '/favicon-dark.svg' : '/favicon.svg');
     </script>
   </head>
   <body class:list={[{ 'home-page': home }]}>
@@ -39,20 +41,20 @@ const toc = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 
           <span class="brand-school">HKUST(GZ)</span>
         </a>
         <div class="header-actions">
-          <button class="search-trigger" type="button" data-search-open aria-label="搜索教程与脚本">
-            <Icon name="search" size={18} /><span>搜索教程、命令…</span><kbd data-search-shortcut>⌘ K</kbd>
+          <button class="search-trigger" type="button" data-search-open aria-label="搜索文档与脚本">
+            <Icon name="search" size={18} /><span>搜索文档、命令…</span><kbd data-search-shortcut>⌘ K</kbd>
           </button>
           <a class="header-official" href={officialUrl} target="_blank" rel="noopener noreferrer">官方文档<Icon name="external" size={14} /></a>
           <span class="header-divider"></span>
           <button class="icon-button theme-toggle" type="button" data-theme-toggle aria-label="切换深浅色主题"><Icon name="sun" class="theme-sun" /><Icon name="moon" class="theme-moon" /></button>
-          <button class="icon-button mobile-menu-trigger" type="button" data-nav-open aria-label="打开教程导航" aria-haspopup="dialog"><Icon name="menu" /></button>
+          <button class="icon-button mobile-menu-trigger" type="button" data-nav-open aria-label="打开文档导航" aria-haspopup="dialog"><Icon name="menu" /></button>
         </div>
       </div>
     </header>
 
     {home ? <main id="main-content" class="home-content"><slot /></main> : (
       <div class="docs-shell">
-        <aside class="desktop-sidebar"><Navigation currentPath={currentPath} /><div class="sidebar-note"><span class="status-dot"></span>主线：HPC 二期 / Slurm<br /><small>官方信息核验 {verifiedAt}</small></div></aside>
+        <aside class="desktop-sidebar"><Navigation currentPath={currentPath} /><div class="sidebar-note"><span class="status-dot"></span>范围：HPC 二期 / Slurm<br /><small>官方信息核验 {verifiedAt}</small></div></aside>
         <main id="main-content" class="docs-main"><slot /></main>
         <aside class="page-toc" aria-label="本页目录">
           {toc.length > 0 && <><p class="toc-label">本页目录</p><nav>{toc.map((heading) => <a href={`#${heading.slug}`} class:list={['toc-link', { 'toc-nested': heading.depth === 3 }]} data-toc-link>{heading.text}</a>)}</nav></>}
@@ -61,16 +63,16 @@ const toc = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 
       </div>
     )}
 
-    <footer class="site-footer"><span>HKUST(GZ) HPC · 非官方入门教程</span><span>价格、队列与权限，以<a href={officialUrl} target="_blank" rel="noopener noreferrer">官方最新信息</a>为准。</span></footer>
+    <footer class="site-footer"><span>HKUST(GZ) HPC · 非官方使用手册</span><span>价格、队列与权限，以<a href={officialUrl} target="_blank" rel="noopener noreferrer">官方最新信息</a>为准。</span></footer>
 
-    <dialog class="mobile-nav-dialog" data-nav-dialog aria-label="教程导航">
-      <div class="dialog-header"><strong>教程导航</strong><button class="icon-button" type="button" data-nav-close aria-label="关闭导航"><Icon name="close" /></button></div>
+    <dialog class="mobile-nav-dialog" data-nav-dialog aria-label="文档导航">
+      <div class="dialog-header"><strong>文档导航</strong><button class="icon-button" type="button" data-nav-close aria-label="关闭导航"><Icon name="close" /></button></div>
       <Navigation currentPath={currentPath} mobile />
     </dialog>
 
     <dialog class="search-dialog" data-search-dialog aria-labelledby="search-title">
-      <div class="search-dialog-header"><Icon name="search" size={22} /><label class="sr-only" id="search-title" for="site-search">搜索教程与脚本</label><input id="site-search" type="search" placeholder="搜索命令、资源、费用…" autocomplete="off" /><button class="icon-button" type="button" data-search-close aria-label="关闭搜索"><Icon name="close" /></button></div>
-      <p class="search-status" data-search-status role="status" aria-live="polite">输入关键词，搜索教程和完整脚本。</p>
+      <div class="search-dialog-header"><Icon name="search" size={22} /><label class="sr-only" id="search-title" for="site-search">搜索文档与脚本</label><input id="site-search" type="search" placeholder="搜索命令、资源、费用…" autocomplete="off" /><button class="icon-button" type="button" data-search-close aria-label="关闭搜索"><Icon name="close" /></button></div>
+      <p class="search-status" data-search-status role="status" aria-live="polite">输入关键词，搜索文档和完整脚本。</p>
       <ul class="search-results" data-search-results></ul>
       <div class="search-dialog-footer"><span><kbd>↑</kbd><kbd>↓</kbd> 选择 <kbd>↵</kbd> 打开</span><span><kbd>Esc</kbd> 关闭</span></div>
     </dialog>

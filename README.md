@@ -1,77 +1,67 @@
-# HKUST(GZ) HPC：SSH + Slurm 简明教程
+# HKUST(GZ) HPC 使用手册
 
-面向第一次使用香港科技大学（广州）HPC 的用户。主线是 **HPC 二期、SSH、Slurm、CPU 作业**，不需要 Docker。
+面向首次使用香港科技大学（广州）HPC 的用户，说明登录集群、提交作业、取回结果的基本流程，以及计费与数据保存的要点。
 
-先读 [快速上手](QUICKSTART.md)，跑通一次，再按需查下面的章节。
+本手册覆盖最常用的使用方式：**二期集群 + SSH + Slurm**。内容是对官方文档的精简整理，完整、最新的说明以 [官方文档](https://docs.hpc.hkust-gz.edu.cn/) 为准。
 
-## 网页预览（Astro）
+## HPC 概览
 
-网站直接读取本项目的 Markdown 和脚本，不需要维护两份教程。支持搜索、代码复制、完整脚本下载、深浅色和移动端导航。
+HPC（高性能计算集群）是由多台服务器组成的共享计算资源，运作方式类似一栋**按预约使用的公共实验楼**：
 
-**本机，在本项目目录，Node.js 22.12+：**
+| 实验楼 | HPC 中的对应 | 用途 |
+|---|---|---|
+| 大厅 | **登录节点** | 登录、整理文件、提交预约；不在此做实验 |
+| 实验间 | **计算节点** | 预约成功后，程序在这里运行 |
+| 预约系统 | **Slurm** | 排队、分配实验间、到时收回 |
+| 预约单 | **作业脚本** | 写明所需的 CPU 核数、内存、时长和要运行的命令 |
+| 按时收费 | **计费** | 按占用的核数 × 时间计费，由导师经费支付 |
 
-```bash
-npm ci
-npm run dev
-```
+一次完整的使用流程：
 
-打开 `http://localhost:4321`。前台运行用 `Ctrl+C` 停止；后台模式用 `npm run dev:stop`，状态可用 `npm run dev:status` 查询。这与 HPC 作业释放无关。
+**本机编写代码 → SSH 登录 → 上传代码 → 提交作业 → 排队 → 在计算节点运行 → 下载结果**
 
-**本机：检查、构建与预览静态网站。**
+## 使用须知
 
-```bash
-npm run build
-npm run preview
-```
+1. **登录节点不用于计算。** 训练、评估和大量计算通过 Slurm 提交到计算节点运行。
+2. **提交不等于运行。** `sbatch` 只是提交申请；状态 `PD` 表示排队中，`R` 表示正在运行。
+3. **运行中的作业持续计费。** 程序空转同样计费。断开 SSH 不会停止作业，不再需要的作业用 `scancel 作业号` 取消。
+4. **调试使用 `debug` 分区。** 免费，单次最长 30 分钟，仅用于调试；程序确认无误后再提交正式作业。
+5. **重要结果需自行备份。** 平台不承诺永久保存数据。
 
-`dist/` 是可部署的静态网站；构建会检查类型、站内链接、下载文件和搜索索引。网页服务运行在本机，不需要申请 HPC 资源；部署时不要上传私钥/实验数据。
+## 阅读顺序
 
-网站启动后，还可用 `npm run test:http` 验证真实页面和下载响应；生产预览可指定地址，例如 `npm run test:http -- http://127.0.0.1:4322`。
+**首次使用**
 
-## 先理解这件事
+1. [快速开始](QUICKSTART.md)：登录并提交第一个作业
+2. [认识 HPC](docs/01-hpc-overview.md)：节点、作业、分区等基本概念
+3. [登录与 SSH](docs/02-login-and-ssh.md)：密钥登录与快捷名
 
-**本机编辑代码 → SSH 登录 → 上传代码/数据 → Slurm 申请资源 → 计算节点执行 → 取回结果。**
+**运行实验前**
 
-| 名称 | 你用它做什么 |
-|---|---|
-| 本机 | 编辑、上传、下载、看图 |
-| 登录节点 | 管理文件、提交作业、查询队列；不跑正式训练 |
-| 计算节点 | 获得 Slurm 分配后，运行训练、调试、评估 |
-| 家目录 | 你的服务器文件目录；二期通常是 `/hpc2hdd/home/<用户名>` |
-| 分区/队列 | 一类可申请的计算资源，例如 CPU、GPU、debug |
-| 作业 | 一次资源申请 + 要执行的程序；不是创建服务器或容器 |
+4. [文件与传输](docs/03-storage-and-data.md)：代码和数据的存放位置与传输方法
+5. [Slurm 作业](docs/04-slurm-basics.md)：作业脚本结构，查看、取消与排队原因
+6. [交互式调试](docs/05-debug-and-interactive.md)：申请计算节点进行调试
+7. [Python 环境](docs/06-software-environment.md)：安装依赖，并在作业中指定解释器
+8. [训练与批量实验](docs/07-training-and-batch.md)：长时间训练、多组参数、GPU
 
-**`sbatch` 只是提交，不代表已经开始运行。作业结束自动释放资源；提前不用了，用 `scancel 作业号`。**
+**参考**
 
-## 阅读入口
+- [费用与预算](docs/08-pricing-and-budget.md)：计费规则与费用估算
+- [结果管理](docs/09-results-and-reproducibility.md)：需要保存的内容与复现方法
+- [常见问题](docs/10-troubleshooting.md)：按报错现象查找原因
+- [命令速查](references/cheatsheet.md)：常用命令汇总
 
-| 想解决的问题 | 文档 |
-|---|---|
-| 我能用哪些平台？登录节点是什么？ | [01 HPC 概览](docs/01-hpc-overview.md) |
-| 怎么登录、配置免密、核验指纹？ | [02 登录与 SSH](docs/02-login-and-ssh.md) |
-| 家目录、作业数据区、SSD；上传下载 | [03 存储与数据](docs/03-storage-and-data.md) |
-| Python 环境怎么装、作业怎么调用？ | [04 软件环境](docs/04-software-environment.md) |
-| 申请、查询、取消；为什么排队？ | [05 Slurm 基础](docs/05-slurm-basics.md) |
-| 申请免费调试资源，进入计算节点 | [06 交互式调试](docs/06-debug-and-interactive.md) |
-| 正式训练、多个种子并行、GPU | [07 批量训练](docs/07-training-and-batch.md) |
-| 怎么收费、估算预算？ | [08 计费与预算](docs/08-pricing-and-budget.md) |
-| 保存哪些结果、怎样方便复现？ | [09 结果与复现](docs/09-results-and-reproducibility.md) |
-| 提交失败、环境错误、作业记录消失 | [10 常见问题](docs/10-troubleshooting.md) |
-
-## 项目目录
+## 仓库结构
 
 ```text
-README.md / QUICKSTART.md       总览 / 最短操作流程
-docs/                          分主题教程
-examples/                      可运行的小程序，不是科研 benchmark
-slurm/                         debug、CPU、GPU、数组作业脚本
-templates/                     SSH 配置与实验目录模板
-references/                    官方链接、核验日期与易变参数
-src/ / public/ / plugins/       Astro 页面、样式、交互与链接转换
-scripts/                       构建产物检查
-AGENTS.md / .gitignore          文档维护规则 / 生成文件排除规则
+QUICKSTART.md   快速开始
+docs/           分章节文档
+slurm/          作业脚本模板（debug、CPU、GPU、数组作业）
+examples/       示例程序，用于演示提交流程
+templates/      SSH 配置与实验目录模板
+references/     命令速查、官方链接、已核验的平台参数
 ```
 
-示例从本项目根目录提交。用户名用占位符；不要把密码、私钥写进仓库。
+平台参数核验于 **2026-10-13**。分区、价格和权限可能调整，以平台实时配置和账单为准，详见 [已核验设置](references/verified-settings.md) 和 [官方链接](references/official-links.md)。
 
-官方信息核验于 **2026-10-13**。队列、权限和价格可能调整，以平台实时配置和账单为准：[官方依据](references/official-links.md)、[已核验设置](references/verified-settings.md)。
+维护说明和本地预览网站的方法见仓库中的 `CONTRIBUTING.md`。

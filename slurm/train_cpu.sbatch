@@ -14,7 +14,7 @@ set -euo pipefail
 cd "${SLURM_SUBMIT_DIR:?Submit from the project root with sbatch}"
 PYTHON_BIN="${PYTHON_BIN:-$HOME/venvs/hpc-tutorial/bin/python}"
 if [[ ! -x "$PYTHON_BIN" ]]; then
-    printf 'Python not executable: %s (see docs/04-software-environment.md)\n' "$PYTHON_BIN" >&2
+    printf 'Python not executable: %s (see docs/06-software-environment.md)\n' "$PYTHON_BIN" >&2
     exit 1
 fi
 export OMP_NUM_THREADS="$SLURM_CPUS_PER_TASK"

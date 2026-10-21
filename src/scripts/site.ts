@@ -12,6 +12,8 @@ let searchRevision = 0;
 
 function setThemeLabel() {
   themeButton.setAttribute('aria-label', document.documentElement.dataset.theme === 'dark' ? '切换为浅色主题' : '切换为深色主题');
+  document.querySelector<HTMLMetaElement>('meta[name="theme-color"]')?.setAttribute('content', document.documentElement.dataset.theme === 'dark' ? '#0b0b0b' : '#f7f9f7');
+  document.querySelector<HTMLLinkElement>('[data-site-favicon]')?.setAttribute('href', document.documentElement.dataset.theme === 'dark' ? '/favicon-dark.svg' : '/favicon.svg');
 }
 setThemeLabel();
 themeButton.addEventListener('click', () => {
@@ -86,11 +88,11 @@ async function renderResults() {
       appendHighlighted(snippet, resultSnippet(entry, query), query);
       link.append(group, title, snippet); item.append(link); searchResults.append(item);
     }
-    searchStatus.textContent = !query ? '从入门开始，或输入命令、节点、费用等关键词。' : ranked.length ? `找到 ${ranked.length} 个匹配页面${ranked.length === 10 ? '（最多展示 10 项）' : ''}。` : '没有找到匹配内容，试试 sbatch、debug、费用或 SSH。';
+    searchStatus.textContent = !query ? '输入命令、节点、费用等关键词。' : ranked.length ? `找到 ${ranked.length} 个匹配页面${ranked.length === 10 ? '（最多展示 10 项）' : ''}。` : '没有找到匹配内容，试试 sbatch、debug、费用或 SSH。';
   } catch {
     if (revision === searchRevision) {
       searchResults.replaceChildren();
-      searchStatus.textContent = '搜索索引暂不可用。请从侧栏阅读教程，或稍后重试。';
+      searchStatus.textContent = '搜索索引暂不可用。请从侧栏浏览文档，或稍后重试。';
     }
   }
 }
@@ -144,7 +146,10 @@ document.querySelectorAll<HTMLPreElement>('.prose pre').forEach((pre, index) => 
   const button = document.createElement('button'); button.type = 'button'; button.className = 'copy-button';
   button.innerHTML = `${copyIcon}<span>复制</span>`;
   button.setAttribute('aria-label', `复制第 ${index + 1} 个代码块`);
-  toolbar.append(label, button); wrapper.prepend(toolbar);
+  // A location label rendered right before the block becomes its header.
+  const location = wrapper.previousElementSibling;
+  toolbar.append(location?.classList.contains('code-location') ? location : label, button);
+  wrapper.prepend(toolbar);
   let resetTimer: ReturnType<typeof setTimeout>;
   button.addEventListener('click', async () => {
     clearTimeout(resetTimer);

@@ -8,9 +8,10 @@
     "dev:stop": "astro dev stop",
     "dev:status": "astro dev status",
     "check": "astro check",
-    "build": "astro check && astro build && node scripts/check-site.mjs",
+    "build": "astro check && astro build && node scripts/check-theme.mjs && node scripts/check-site.mjs",
     "preview": "astro preview --host 127.0.0.1",
     "test:site": "node scripts/check-site.mjs",
+    "test:theme": "node scripts/check-theme.mjs",
     "test:http": "node scripts/check-http.mjs"
   },
   "engines": {

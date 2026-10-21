@@ -1,37 +1,67 @@
-# 10 · 常见问题速查
+# 10 · 常见问题
 
-下面除 SSH 客户端诊断外，命令均在 **登录节点**执行。`JOB_ID=123456` 要替换成自己的作业号。
+按问题出现的阶段查找。命令中的 `123456` 替换为实际的作业号。
 
-| 现象 | 先检查 | 怎么处理 |
+## 登录
+
+| 现象 | 常见原因 | 处理方法 |
 |---|---|---|
-| SSH 超时 | 校园网/VPN、二期登录地址 | 恢复网络，确认账号已开通 |
-| `Permission denied (publickey)` | 用户名、私钥路径、对应公钥是否授权 | 本机用 `ssh -v hkust-hpc2` 查看选用了哪个 key；不要贴私钥 |
-| 主机指纹变化 | 是否更换入口/管理节点 | 先向可信渠道核验，不直接关闭检查 |
-| 提交后一直 `PD` | `squeue` 的原因、`scontrol show job` | `Resources`/`Priority` 通常等待；QoS/账户限制需减资源或联系管理员 |
-| `Invalid partition` / QoS 拒绝 | `sinfo`、分区和账户权限 | 确认是在二期；以实时配置为准 |
-| 日志文件打不开 | `logs/` 是否提交前已存在 | 先 `mkdir -p logs`；Slurm 启动脚本前就要打开日志 |
-| `ModuleNotFoundError` | 作业中的 Python 路径 | 明确指定环境里的 Python；登录节点激活环境不保证批作业正确使用 |
-| `OUT_OF_MEMORY` | `sacct`、错误日志、批大小 | 减 batch/并行环境，或增加 `--mem`；CPU 内存和 GPU 显存不同 |
-| `TIMEOUT` | 时间上限、checkpoint 是否存在 | 调整时限，按项目的恢复训练功能续跑 |
-| `FAILED` / 非零 `ExitCode` | `.err`、`.out`、完整 traceback | 先修程序，别盲目批量重提 |
-| `squeue` 里“记录不见了” | `sacct -j 作业号` | 可能已结束，并非数据被删；查 `outputs/` 和日志 |
-| 8/128 核没有更快 | 程序线程/进程、环境交互瓶颈 | 申请资源不等于自动并行，先做小规模吞吐测试 |
+| `Connection timed out`，持续无法连接 | 不在校园网或未连接 VPN；地址错误 | 连接 VPN；核对地址 `hpc2login.hpc.hkust-gz.edu.cn`；确认账号已开通 |
+| `Permission denied (publickey)` | 用户名错误、私钥路径不正确，或公钥未添加到服务器 | 本机执行 `ssh -v hkust-hpc2`，查看实际使用的密钥；重新添加公钥。私钥不得发送给他人 |
+| `REMOTE HOST IDENTIFICATION HAS CHANGED` | 平台重装或更换了登录节点，与本机记录的旧指纹不一致 | 本机执行 `ssh-keygen -R hpc2login.hpc.hkust-gz.edu.cn` 删除旧记录，再重新登录并接受新指纹，见 [登录与 SSH](02-login-and-ssh.md) |
+| `UNPROTECTED PRIVATE KEY FILE` 或 `Bad owner or permissions` | 本机 `~/.ssh` 权限过宽 | macOS / Linux：执行 `chmod 700 ~/.ssh` 和 `chmod 600 ~/.ssh/config ~/.ssh/id_ed25519_hkustgz` |
 
-**登录节点：一组常用诊断。**
+## 提交与排队
+
+| 现象 | 常见原因 | 处理方法 |
+|---|---|---|
+| `Invalid partition name specified` | 分区名错误，或当前不在二期 | 用 `sinfo` 查看可用分区；确认登录的是二期地址 |
+| 提交时被 QoS 或账户限制拒绝 | 申请量超过账号上限，或没有该分区权限 | 减少申请量；不明确时联系管理员 |
+| 作业立即结束，找不到日志 | `logs/` 目录不存在 | 先 `mkdir -p logs` 再提交 |
+| 持续处于 `PD` | 正在排队，原因见 `squeue` 最后一列 | 对照 [排队原因](04-slurm-basics.md#排队原因) 处理 |
+
+## 运行
+
+| 现象 | 常见原因 | 处理方法 |
+|---|---|---|
+| `ModuleNotFoundError` | 作业使用的 Python 不是安装了该包的解释器 | 在脚本中写 Python 的完整路径，见 [Python 环境](06-software-environment.md) |
+| `Python not executable: ...` | 本仓库脚本找不到指定的环境 | 先建立环境，或设置 `PYTHON_BIN` |
+| 状态 `OUT_OF_MEMORY` | 内存超过 `--mem` | 增大 `--mem`，或减小 batch size、并行环境数。CPU 内存与 GPU 显存相互独立 |
+| 状态 `TIMEOUT` | 超过 `--time` | 增大时间上限；程序应定期保存 checkpoint，支持断点续训 |
+| 状态 `FAILED`，退出码不是 `0:0` | 程序报错 | 查看 `.err` 文件中的完整报错；修复后先在 debug 中测试，再重新提交 |
+| `CUDA unavailable` 或 `torch.cuda.is_available()` 为 `False` | 未申请 GPU，或安装的是 CPU 版 PyTorch | 确认使用了 GPU 分区和 `--gres=gpu:1`；安装 CUDA 版 PyTorch |
+| 增加核数后速度未提升 | 程序本身未并行 | 先做小规模测速，见 [训练与批量实验](07-training-and-batch.md) |
+
+## 结果
+
+| 现象 | 常见原因 | 处理方法 |
+|---|---|---|
+| `squeue` 中作业消失 | 作业已结束，数据并未删除 | 用 `sacct -j 作业号` 查看状态；在 `outputs/` 和 `logs/` 中查找结果 |
+| `Output already exists` | 示例程序拒绝覆盖已有结果 | 更换输出目录 |
+
+## 诊断命令
+
+**登录节点：** 以本仓库的 CPU 脚本为例，日志文件名按实际情况修改
 
 ```bash
 JOB_ID=123456
-squeue -r -u "$USER" -o '%.18i %.24j %.2t %.10M %.6C %R'
+squeue -r -u "$USER"
 scontrol show job "$JOB_ID"
 sacct -j "$JOB_ID" --format=JobID,State,Elapsed,AllocCPUS,MaxRSS,ExitCode
 tail -n 60 "logs/cpu-${JOB_ID}.out"
 tail -n 60 "logs/cpu-${JOB_ID}.err"
 ```
 
-`MaxRSS` 可能主要出现在作业 step 行，且依赖站点采样；空值不等于零占用。自己调用 `srun` 的脚本常有 `.0` 等 step 记录。
+`sacct` 中的 `MaxRSS`（内存峰值）通常显示在带 `.0` 等后缀的步骤行上；该值依赖采样，为空不代表没有占用内存。
 
-向管理员反馈时提供：登录入口、作业号、提交时间、分区、等待原因/错误、脚本和脱敏日志。不要发送密码、token、私钥。
+## 联系管理员
 
-支持邮箱：`hpc@hkust-gz.edu.cn`。涉及费用/账户权限，同时联系导师或课题组负责人。
+发送邮件至 `hpc@hkust-gz.edu.cn`，附上以下信息：
+
+- 登录地址、作业号、提交时间、分区
+- 报错信息或排队原因
+- 作业脚本和相关日志（去除个人敏感信息）
+
+**不要发送密码、私钥或 token。** 涉及费用或账号权限的问题，同时告知导师或课题组负责人。
 
 [返回目录](../README.md)

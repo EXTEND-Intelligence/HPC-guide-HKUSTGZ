@@ -1,45 +1,49 @@
-# 09 · 结果保存与复现
+# 09 · 结果管理与复现
 
-Slurm 保存的是调度记录和标准输出/错误；reward、胜率、捕获率、模型等 **需要训练程序自己保存**。Slurm 不会自动替你记录这些指标。
+本章说明作业结束后自动保留的内容与需要程序自行保存的内容，以及结果的组织、备份与复现。
 
-## 每次实验至少保存什么？
+## Slurm 的记录范围
 
-| 文件/内容 | 用途 |
+| 保存方 | 内容 |
 |---|---|
-| 完整配置、CLI 参数、训练种子 | 说明实际实验设置，而不是只写配置文件名 |
-| Git commit、依赖版本、环境参数 | 确认代码和软件版本 |
-| 逐次训练/评估指标 CSV | 重画曲线；保留原始值、步数和评估次数 |
-| checkpoint | 复测策略；至少保留 final，最好还有验证规则明确的 best |
-| 评估数据与汇总 | 保存每回合结果、评估种子/初始化规则、均值与离散程度 |
-| Slurm 作业号、日志、退出状态 | 排查失败、确认完成和资源使用 |
+| Slurm | 作业号、状态、运行时长、资源用量（用 `sacct` 查看），以及程序的屏幕输出（`logs/*.out`、`logs/*.err`） |
+| **训练程序** | 训练指标（loss、准确率、reward 等）、模型 checkpoint、配置、评估结果 |
 
-不要每个环境 step 都保存大型 checkpoint。按固定间隔存指标，降低模型保存频率；大矩阵/轨迹按研究问题定期采样，不要无差别全量保存。
+Slurm 不记录训练指标；程序未写入文件的内容，作业结束后不会保留。
 
-训练种子与评估种子分开记录。评估若每个 episode 都用相同种子 `reset`，可能反复评估同一初始场景；通常只初始化随机流一次，或明确使用不同 episode 种子。
+## 每次运行应保存的内容
 
-## 目录规范
+| 内容 | 用途 |
+|---|---|
+| 完整配置、命令行参数、随机种子 | 确认实际使用的设置 |
+| Git commit、依赖版本 | 确认代码和库的版本 |
+| 原始指标，按步数记录到 CSV | 可随时重新绘制曲线 |
+| checkpoint，至少保留最终模型 | 可重新评估 |
+| 评估结果明细 | 不只保留平均值 |
+| 作业号、日志 | 排查问题、核对资源用量 |
 
-```text
-outputs/<环境族>/<场景>/<算法>/seed-23/<唯一run-id>/
-    config.yaml
-    metadata.json
-    metrics.csv
-    evaluation/
-    checkpoints/
-figures/<环境族>/<场景>/
-    curves/
-    evaluation/
+本仓库的 [`train_demo.py`](../examples/train_demo.py) 是一个参考实现：保存 `metadata.json`（参数、Git、依赖、Slurm 信息）、`metrics.csv`（原始指标）、`summary.json` 和 `checkpoint.pt`。
+
+**登录节点：** 记录依赖版本和代码版本，路径按实际项目修改
+
+```bash
+cd ~/my-project
+mkdir -p logs
+"$HOME/venvs/my-env/bin/python" -m pip freeze > logs/requirements-resolved.txt
+git rev-parse HEAD
 ```
 
-场景名应包含 agent 数、full/local、观测半径等关键差异，例如 `8p3e_local-r0.3_k3`；完整设置仍须保存到配置。参照 [目录模板](../templates/experiment-layout.md)。
+## 每次运行使用新目录
 
-本项目小示例保存 `metadata.json`、`metrics.csv`、`summary.json`、`checkpoint.pt`；测试 hello 只保存 `result.json`。输出目录已存在时拒绝覆盖。
+输出目录名带作业号（如 `outputs/run-${SLURM_JOB_ID}`），每次运行写入新目录，不覆盖旧结果。本仓库的示例程序在目录已存在时拒绝运行，以防止覆盖。
 
-## 保留作业记录与备份
+checkpoint 按固定间隔保存，避免每一步都保存大文件。目录组织方式可参考 [实验目录模板](../templates/experiment-layout.md)。
 
-`squeue` 只显示活动作业，完成后消失很正常。`sacct` 是历史记录，但集群可能有保留期限，不能当永久档案。
+## 保存作业记录
 
-**登录节点，按自己的作业号修改：**
+`squeue` 只显示尚未结束的作业。`sacct` 可查询历史，但集群不一定长期保留，重要作业的记录可另存为文件。
+
+**登录节点：**
 
 ```bash
 JOB_ID=123456
@@ -47,8 +51,16 @@ sacct -j "$JOB_ID" --format=JobID,State,Elapsed,AllocCPUS,MaxRSS,ExitCode \
   > "logs/accounting-${JOB_ID}.txt"
 ```
 
-定期用 [rsync 下载](03-storage-and-data.md)。代码和小型配置适合 Git；大 checkpoint/轨迹放独立存储。论文数据不要只留下图片：**同时保留生成图的数据、脚本、参数和来源清单**。
+## 备份
 
-比较算法时统一环境、训练预算、评估协议，多种子报告均值与变异，不挑选单次最优结果冒充总体表现。
+- 定期用 [rsync 或 scp](03-storage-and-data.md) 将结果下载到本机或其他存储。
+- 代码和小型配置纳入 Git；大型 checkpoint 和数据另行备份。
+- 论文中使用的图，除图片本身外，还应保留绘图所用的数据、脚本和参数。
+
+## 实验记录建议
+
+- 训练种子与评估种子分开记录。
+- 比较不同方法时，统一环境、训练预算和评估方式；使用多个种子，报告均值和波动，而不是只选取最好的一次。
+- 一批实验运行期间，不修改其使用的代码和配置。
 
 [返回目录](../README.md)
