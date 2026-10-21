@@ -1,6 +1,7 @@
 import { defineConfig } from 'astro/config';
 import { unified } from '@astrojs/markdown-remark';
 import remapLinks from './plugins/remap-links.mjs';
+import annotateBlocks from './plugins/annotate-blocks.mjs';
 
 export default defineConfig({
   output: 'static',
@@ -8,7 +9,7 @@ export default defineConfig({
   // actual extensions. "always" makes these endpoints return 404 in dev.
   trailingSlash: 'ignore',
   markdown: {
-    processor: unified({ remarkPlugins: [remapLinks] }),
+    processor: unified({ remarkPlugins: [remapLinks, annotateBlocks] }),
     shikiConfig: {
       themes: { light: 'github-light', dark: 'github-dark' },
       defaultColor: false,

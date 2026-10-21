@@ -146,7 +146,10 @@ document.querySelectorAll<HTMLPreElement>('.prose pre').forEach((pre, index) => 
   const button = document.createElement('button'); button.type = 'button'; button.className = 'copy-button';
   button.innerHTML = `${copyIcon}<span>复制</span>`;
   button.setAttribute('aria-label', `复制第 ${index + 1} 个代码块`);
-  toolbar.append(label, button); wrapper.prepend(toolbar);
+  // A location label rendered right before the block becomes its header.
+  const location = wrapper.previousElementSibling;
+  toolbar.append(location?.classList.contains('code-location') ? location : label, button);
+  wrapper.prepend(toolbar);
   let resetTimer: ReturnType<typeof setTimeout>;
   button.addEventListener('click', async () => {
     clearTimeout(resetTimer);

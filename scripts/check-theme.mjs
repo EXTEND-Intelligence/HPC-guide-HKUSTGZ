@@ -14,7 +14,9 @@ for (const [name, value] of Object.entries(tokens)) {
     assert(hex.slice(0, 2) === hex.slice(2, 4) && hex.slice(2, 4) === hex.slice(4, 6), `Non-neutral dark color: ${name} = ${value}`);
   }
 }
-assert.equal(tokens['--bg'], '#0b0b0b', 'Keep the requested near-black canvas');
+// A soft charcoal canvas: neutral, but clearly lighter than pure black to reduce glare.
+const canvas = parseInt(tokens['--bg'].slice(1, 3), 16);
+assert(canvas >= 0x18 && canvas <= 0x26, `Dark canvas should be soft charcoal, not near-black: ${tokens['--bg']}`);
 
 function luminance(hex) {
   const channels = hex.slice(1).match(/../g).map((value) => {
@@ -29,6 +31,7 @@ const pairs = [
   ['--accent', '--accent-soft'], ['--primary-text', '--primary-bg'],
   ['--brand-text', '--brand-bg'], ['--terminal-text', '--terminal-bg'],
   ['--terminal-comment', '--terminal-bg'], ['--terminal-bar-text', '--terminal-bar-bg'],
+  ['--warn-text', '--warn-soft'],
 ];
 for (const [foreground, background] of pairs) {
   const a = luminance(tokens[foreground]);
